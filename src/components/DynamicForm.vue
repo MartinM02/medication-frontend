@@ -49,11 +49,18 @@ export default {
   },
   methods: {
     addMedicine() {
-      this.medicines.push({...this.medicine});
-      this.medicine.name = '';
-      this.medicine.quantity = 0;
-      this.medicine.dose = '';
-      this.medicine.period = '';
+      api.addMedication(this.medicine)
+        .then(response => {
+          this.medicines.push(response.data);
+          this.medicine.name = '';
+          this.medicine.quantity = 0;
+          this.medicine.dose = '';
+          this.medicine.period = '';
+          alert('Medicine added successfully!');
+        })
+        .catch(error => {
+          console.error('Error while adding medication:', error);
+        });
     },
     fetchMedicines() {
       api.getMedications()
