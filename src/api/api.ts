@@ -15,6 +15,13 @@ interface medicationResponse {
   period: number;
 }
 
+interface FormData {
+  name: string;
+  quantity: number;
+  dose: number;
+  period: string;
+}
+
 const apiClient = axios.create({
   baseURL: 'https://medication-spring-boot.onrender.com', // URL deines Backends
   headers: {
@@ -31,5 +38,11 @@ export default {
   },
   postMedication(medication: medicationData) {
     return apiClient.post('api/medication', medication) // Pfad zum Endpoint für Medikamente
+  },
+  submitForm(formData: FormData) {
+    return apiClient.post('/api/medication', formData);
+  },
+  getFormData() {
+    return apiClient.get<FormData[]>('/api/formData'); // Pfad angepasst an deinen Server-Endpoint
   },
 }

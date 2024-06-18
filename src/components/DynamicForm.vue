@@ -1,80 +1,99 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import api from '@/api/api';
+
+interface FormData {
+  name: string;
+  quantity: number;
+  dose: number;
+  period: string;
+}
+
+const name = ref('');
+const quantity = ref(0);
+const dose = ref(0);
+const period = ref('');
+const submittedForms = ref<FormData[]>([]);
+const errorMessage = ref('');
+
+const fetchFormData = async () => {
+  try {
+    const response = await api.getFormData();
+    submittedForms.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch form data", error);
+    errorMessage.value = "Failed to load form data.";
+  }
+};
+
+const submitForm = async () => {
+  try {
+    const formData: FormData = {
+      name: name.value,
+      quantity: quantity.value,
+      dose: dose.value,
+      period: period.value
+    };
+    await api.submitForm(formData);
+    submittedForms.value.push(formData); // Aktualisiere die lokale Liste, ohne erneut zu laden
+    name.value = '';
+    quantity.value = 0;
+    dose.value = 0;
+    period.value = '';
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    errorMessage.value = 'Failed to submit form.';
+  }
+};
+
+onMounted(fetchFormData);
+</script>
+
 <template>
-  <div class="container">
-    <h2>Medikament hinzufügen</h2>
-    <form @submit.prevent="addMedicine">
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="medicine.name" required>
-      </div>
-      <div class="form-group">
-        <label for="quantity">Menge:</label>
-        <input type="number" id="quantity" v-model.number="medicine.quantity" required>
-      </div>
-      <div class="form-group">
-        <label for="dose">Dosis:</label>
-        <input type="text" id="dose" v-model="medicine.dose" required>
-      </div>
-      <div class="form-group">
-        <label for="period">Zeitraum:</label>
-        <input type="text" id="period" v-model="medicine.period" required>
-      </div>
-      <button type="submit" class="btn">Hinzufügen</button>
+  <div>
+    <h2>Enter Your Details:</h2>
+    <form @submit.prevent="submitForm">
+      <input v-model="name" placeholder="Name" />
+      <input type="number" v-model="quantity" placeholder="Quantity" />
+      <input type="number" v-model="dose" placeholder="Dose" />
+      <input v-model="period" placeholder="Period" />
+      <button type="submit">Submit</button>
     </form>
-    <h3>Medikamente:</h3>
-    <ul class="medicine-list">
-      <li v-for="(med, index) in medicines" :key="index">
-        {{ med.name }} - Menge: {{ med.quantity }}, Dosis: {{ med.dose }}, Zeitraum: {{ med.period }}
-      </li>
-    </ul>
+    <p v-if="errorMessage">{{ errorMessage }}</p>
+
+    <h2>Submitted Forms:</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Dose</th>
+        <th>Period</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(form, index) in submittedForms" :key="index">
+        <td>{{ form.name }}</td>
+        <td>{{ form.quantity }}</td>
+        <td>{{ form.dose }}</td>
+        <td>{{ form.period }}</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
-<script>
-import api from '@/api/api';
-
-export default {
-  data() {
-    return {
-      medicine: {
-        name: '',
-        quantity: 0,
-        dose: '',
-        period: ''
-      },
-      medicines: []
-    };
-  },
-  mounted() {
-    this.fetchMedicines();
-  },
-  methods: {
-    addMedicine() {
-      api.addMedication(this.medicine)
-        .then(response => {
-          this.medicines.push(response.data);
-          this.medicine.name = '';
-          this.medicine.quantity = 0;
-          this.medicine.dose = '';
-          this.medicine.period = '';
-          alert('Medicine added successfully!');
-        })
-        .catch(error => {
-          console.error('Error while adding medication:', error);
-        });
-    },
-    fetchMedicines() {
-      api.getMedications()
-        .then(response => {
-          this.medicines = response.data;
-          console.log('Medikamente geladen:', this.medicines);
-        })
-        .catch(error => {
-          console.error('Fehler beim Laden der Medikamente:', error);
-        });
-    }
-  }
-};
-</script>
-
 <style scoped>
+input, button {
+  display: block;
+  margin: 10px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
 </style>
