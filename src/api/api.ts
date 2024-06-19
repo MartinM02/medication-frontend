@@ -36,8 +36,8 @@ export default {
   getMedications() {
     return apiClient.get<medicationResponse[]>('api/medication') // Pfad zum Endpoint für Medikamente
   },
-  postMedication(medication: medicationData) {
-    return apiClient.post('api/medication', medication) // Pfad zum Endpoint für Medikamente
+  postMedication() {
+    return apiClient.get<medicationData[]>('api/medication') // Pfad zum Endpoint für Medikamente
   },
   submitForm(formData: FormData) {
     return apiClient.post('/api/medication', formData);
