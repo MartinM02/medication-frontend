@@ -13,13 +13,13 @@ const name = ref('');
 const quantity = ref(0);
 const dose = ref(0);
 const period = ref('');
-const submittedForms = ref<FormData[]>([]);
+const submittedMedication = ref<FormData[]>([]);
 const errorMessage = ref('');
 
 const fetchFormData = async () => {
   try {
     const response = await api.getFormData();
-    submittedForms.value = response.data;
+    submittedMedication.value = response.data;
   } catch (error) {
     console.error("Failed to fetch form data", error);
     errorMessage.value = "Failed to load form data.";
@@ -35,7 +35,7 @@ const submitForm = async () => {
       period: period.value
     };
     await api.submitForm(formData);
-    submittedForms.value.push(formData); // Aktualisiere die lokale Liste, ohne erneut zu laden
+    submittedMedication.value.push(formData); // Aktualisiere die lokale Liste, ohne erneut zu laden
     name.value = '';
     quantity.value = 0;
     dose.value = 0;
@@ -72,7 +72,7 @@ onMounted(fetchFormData);
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(form, index) in submittedForms" :key="index">
+      <tr v-for="(form, index) in submittedMedication" :key="index">
         <td>{{ form.name }}</td>
         <td>{{ form.quantity }}</td>
         <td>{{ form.dose }}</td>
