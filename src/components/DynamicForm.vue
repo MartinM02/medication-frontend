@@ -3,23 +3,34 @@ import { ref, onMounted } from 'vue';
 import api from '@/api/api';
 
 interface FormData {
+  id?: number;
   name: string;
   quantity: number;
   dose: number;
   period: string;
 }
 
+interface MedicationData extends FormData {
+  id: number; // ID sollte immer gesetzt sein
+}
+
 const name = ref('');
 const quantity = ref(0);
 const dose = ref(0);
 const period = ref('');
-const submittedMedication = ref<FormData[]>([]);
+const submittedMedication = ref<MedicationData[]>([]);
 const errorMessage = ref('');
 
 const fetchFormData = async () => {
   try {
     const response = await api.getFormData();
-    submittedMedication.value = response.data;
+    submittedMedication.value = response.data.map(item => ({
+      id: item.id!,
+      name: item.name,
+      quantity: item.quantity,
+      dose: item.dose,
+      period: item.period
+    }));
   } catch (error) {
     console.error("Failed to fetch form data", error);
     errorMessage.value = "Failed to load form data.";
@@ -34,8 +45,9 @@ const submitForm = async () => {
       dose: dose.value,
       period: period.value
     };
-    await api.submitForm(formData);
-    submittedMedication.value.push(formData); // Aktualisiere die lokale Liste, ohne erneut zu laden
+    const response = await api.submitForm(formData);
+    const newMedication: MedicationData = { ...formData, id: response.data.id! }; // Stelle sicher, dass die ID korrekt gesetzt wird
+    submittedMedication.value.push(newMedication); // Aktualisiere die lokale Liste, ohne erneut zu laden
     name.value = '';
     quantity.value = 0;
     dose.value = 0;
@@ -46,7 +58,22 @@ const submitForm = async () => {
   }
 };
 
+
+const deleteMedication = async (id: number) => {
+  try {
+    await api.deleteFormData(id);
+    submittedMedication.value = submittedMedication.value.filter(medication => medication.id !== id);
+  } catch (error) {
+    console.error('Error deleting medication:', error);
+    errorMessage.value = 'Failed to delete medication.';
+  }
+};
+
 onMounted(fetchFormData);
+
+
+onMounted(fetchFormData);
+
 </script>
 
 <template>
@@ -69,19 +96,26 @@ onMounted(fetchFormData);
         <th>Quantity</th>
         <th>Dose</th>
         <th>Period</th>
+        <th>Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(form, index) in submittedMedication" :key="index">
+      <tr v-for="form in submittedMedication" :key="form.id">
         <td>{{ form.name }}</td>
         <td>{{ form.quantity }}</td>
         <td>{{ form.dose }}</td>
         <td>{{ form.period }}</td>
+        <td>
+          <button @click="deleteMedication(form.id)">Delete</button>
+        </td>
       </tr>
       </tbody>
     </table>
   </div>
 </template>
+
+
+
 
 <style scoped>
 input, button {
