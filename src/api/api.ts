@@ -3,13 +3,13 @@ import axios from 'axios';
 interface FormData {
   id?: number;
   name: string;
-  quantity: number;
+  quantity: string;
   dose: number;
   period: string;
 }
 
 const apiClient = axios.create({
-  baseURL: 'https://medication-spring-boot.onrender.com',
+  baseURL: 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -24,5 +24,9 @@ export default {
   },
   deleteFormData(id: number) {
     return apiClient.delete(`/api/medication/${id}`);
+  },
+
+  updateForm(id: number, formData: FormData) {
+    return apiClient.put(`/api/medication/${id}`, formData);
   },
 };

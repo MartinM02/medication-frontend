@@ -5,21 +5,22 @@ import api from '@/api/api';
 interface FormData {
   id?: number;
   name: string;
-  quantity: number;
+  quantity: string;
   dose: number;
   period: string;
 }
 
 interface MedicationData extends FormData {
-  id: number; // ID sollte immer gesetzt sein
+  id: number;
 }
 
 const name = ref('');
-const quantity = ref(0);
+const quantity = ref('');
 const dose = ref(0);
 const period = ref('');
 const submittedMedication = ref<MedicationData[]>([]);
 const errorMessage = ref('');
+const editingMedication = ref<MedicationData | null>(null);
 
 const fetchFormData = async () => {
   try {
@@ -45,11 +46,18 @@ const submitForm = async () => {
       dose: dose.value,
       period: period.value
     };
-    const response = await api.submitForm(formData);
-    const newMedication: MedicationData = { ...formData, id: response.data.id! }; // Stelle sicher, dass die ID korrekt gesetzt wird
-    submittedMedication.value.push(newMedication); // Aktualisiere die lokale Liste, ohne erneut zu laden
+    if (editingMedication.value) {
+      const response = await api.updateForm(editingMedication.value.id, formData);
+      const index = submittedMedication.value.findIndex(med => med.id === editingMedication.value!.id);
+      submittedMedication.value[index] = response.data;
+      editingMedication.value = null;
+    } else {
+      const response = await api.submitForm(formData);
+      const newMedication: MedicationData = { ...formData, id: response.data.id! };
+      submittedMedication.value.push(newMedication);
+    }
     name.value = '';
-    quantity.value = 0;
+    quantity.value = '';
     dose.value = 0;
     period.value = '';
   } catch (error) {
@@ -58,6 +66,13 @@ const submitForm = async () => {
   }
 };
 
+const editMedication = (medication: MedicationData) => {
+  name.value = medication.name;
+  quantity.value = medication.quantity;
+  dose.value = medication.dose;
+  period.value = medication.period;
+  editingMedication.value = medication;
+};
 
 const deleteMedication = async (id: number) => {
   try {
@@ -70,10 +85,6 @@ const deleteMedication = async (id: number) => {
 };
 
 onMounted(fetchFormData);
-
-
-onMounted(fetchFormData);
-
 </script>
 
 <template>
@@ -81,10 +92,10 @@ onMounted(fetchFormData);
     <h2>Enter Your Details:</h2>
     <form @submit.prevent="submitForm">
       <input v-model="name" placeholder="Name" />
-      <input type="number" v-model="quantity" placeholder="Quantity" />
-      <input type="number" v-model="dose" placeholder="Dose" />
+      <input v-model="quantity" placeholder="Quantity" />
+      <input v-model="dose" placeholder="Dose" />
       <input v-model="period" placeholder="Period" />
-      <button type="submit">Submit</button>
+      <button type="submit">{{ editingMedication ? 'Update' : 'Submit' }}</button>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
 
@@ -94,7 +105,7 @@ onMounted(fetchFormData);
       <tr>
         <th>Name</th>
         <th>Quantity</th>
-        <th>Dose</th>
+        <th>Dose (in mg)</th>
         <th>Period</th>
         <th>Actions</th>
       </tr>
@@ -106,6 +117,7 @@ onMounted(fetchFormData);
         <td>{{ form.dose }}</td>
         <td>{{ form.period }}</td>
         <td>
+          <button @click="editMedication(form)">Edit</button>
           <button @click="deleteMedication(form.id)">Delete</button>
         </td>
       </tr>
@@ -113,9 +125,6 @@ onMounted(fetchFormData);
     </table>
   </div>
 </template>
-
-
-
 
 <style scoped>
 input, button {
