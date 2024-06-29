@@ -84,6 +84,29 @@ const deleteMedication = async (id: number) => {
   }
 };
 
+const sortDirectionName = ref('asc');
+const sortDirectionDose = ref('asc');
+
+const sortByName = () => {
+  if (sortDirectionName.value === 'asc') {
+    submittedMedication.value.sort((a, b) => a.name.localeCompare(b.name));
+    sortDirectionName.value = 'desc';
+  } else {
+    submittedMedication.value.sort((a, b) => b.name.localeCompare(a.name));
+    sortDirectionName.value = 'asc';
+  }
+};
+
+const sortByDose = () => {
+  if (sortDirectionDose.value === 'asc') {
+    submittedMedication.value.sort((a, b) => a.dose - b.dose);
+    sortDirectionDose.value = 'desc';
+  } else {
+    submittedMedication.value.sort((a, b) => b.dose - a.dose);
+    sortDirectionDose.value = 'asc';
+  }
+};
+
 onMounted(fetchFormData);
 </script>
 
@@ -95,7 +118,7 @@ onMounted(fetchFormData);
       <input v-model="quantity" placeholder="Quantity" />
       <input v-model="dose" placeholder="Dose" />
       <input v-model="period" placeholder="Period" />
-      <button type="submit">{{ editingMedication ? 'Update' : 'Submit' }}</button>
+      <button type="submit" class="submit">{{ editingMedication ? 'Update' : 'Submit' }}</button>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
 
@@ -103,9 +126,9 @@ onMounted(fetchFormData);
     <table>
       <thead>
       <tr>
-        <th>Name</th>
+        <th @click="sortByName" role="button">Name</th>
         <th>Quantity</th>
-        <th>Dose (in mg)</th>
+        <th @click="sortByDose" role="button">Dose (in mg)</th>
         <th>Period</th>
         <th>Actions</th>
       </tr>
@@ -117,8 +140,8 @@ onMounted(fetchFormData);
         <td>{{ form.dose }}</td>
         <td>{{ form.period }}</td>
         <td>
-          <button @click="editMedication(form)">Edit</button>
-          <button @click="deleteMedication(form.id)">Delete</button>
+          <button @click="editMedication(form)" class="edit">Edit</button>
+          <button @click="deleteMedication(form.id)" class="delete">Delete</button>
         </td>
       </tr>
       </tbody>
@@ -127,10 +150,58 @@ onMounted(fetchFormData);
 </template>
 
 <style scoped>
-input, button {
+
+button {
+  background-color: var(--color-background); /* Hintergrundfarbe der App */
+  border: none;
+  color: #2b2b2c; /* Textfarbe der Buttons */
+  padding: 8px 16px; /* kleinere Größe */
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+}
+
+button.submit {
+  background-color: #006400; /* Dunkleres Grün */
+}
+
+button.edit {
+  background-color: #1462de; /* Dunkleres Blau */
+}
+
+button.delete {
+  background-color: #8B0000; /* Dunkleres Rot */
+}
+
+button.submit:hover, button.edit:hover, button.delete:hover {
+  background-color: #000000; /* Schwarz beim Überfahren mit der Maus */
+}
+
+button:hover {
+  background-color: black;
+}
+
+
+input {
   display: block;
   margin: 10px 0;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px; /* Fügt abgerundete Ecken hinzu */
+  background-color: #f0f0f0; /* Setzt den Hintergrund auf ein einheitliches Hellgrau */
+  color: #000000; /* Setzt die Textfarbe auf Schwarz */
 }
+
+input:focus {
+  outline: none; /* Entfernt den blauen Fokus-Rahmen */
+  border-color: #006400; /* Setzt die Rahmenfarbe beim Fokussieren auf Dunkelgrün */
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -138,5 +209,10 @@ table {
 th, td {
   padding: 8px;
   border: 1px solid #ccc;
+}
+
+th[role="button"] {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

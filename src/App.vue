@@ -18,8 +18,10 @@ const toggleDarkMode = () => {
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <button @click="toggleDarkMode">{{ darkMode ? 'Light Mode' : 'Dark Mode' }}</button>
+        <div class="switch">
+          <input type="checkbox" id="darkModeSwitch" @change="toggleDarkMode" :checked="darkMode">
+          <label for="darkModeSwitch">{{ darkMode ? '' : '' }}</label>
+        </div>
       </nav>
     </div>
   </header>
@@ -74,4 +76,46 @@ input[type="text"]:focus, input[type="number"]:focus {
 .medicine-list li {
   color: black; / Stellt sicher, dass der Text in der Liste der Medikamente immer schwarz ist */
 }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Reduzierte Breite */
+  height: 20px; /* Reduzierte Höhe */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch label {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.switch label:before {
+  height: 16px; /* Reduzierte Höhe des Schiebereglers */
+  width: 16px; /* Reduzierte Breite des Schiebereglers */
+}
+
+input:checked + label {
+  background-color: #2196F3;
+}
+
+input:checked + label:before {
+  transform: translateX(20px); /* Reduzierter Versatz des Schiebereglers */
+}
+
+body.dark-mode nav a.router-link-exact-active {
+  color: #ffffff; /* Weißer Text im Dark Mode */
+}
+
 </style>
