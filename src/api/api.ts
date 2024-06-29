@@ -20,7 +20,7 @@ export default {
     return apiClient.post('/api/medication', formData);
   },
   getFormData() {
-    return apiClient.get<FormData[]>('/api/medication'); // Pfad angepasst an deinen Server-Endpoint
+    return apiClient.get<FormData[]>('/api/medication');
   },
   deleteFormData(id: number) {
     return apiClient.delete(`/api/medication/${id}`);

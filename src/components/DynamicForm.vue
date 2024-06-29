@@ -49,7 +49,7 @@ const submitForm = async () => {
     if (editingMedication.value) {
       const response = await api.updateForm(editingMedication.value.id, formData);
       const index = submittedMedication.value.findIndex(med => med.id === editingMedication.value!.id);
-      submittedMedication.value[index] = response.data;
+      submittedMedication.value[index] = { ...formData, id: response.data.id! };
       editingMedication.value = null;
     } else {
       const response = await api.submitForm(formData);
