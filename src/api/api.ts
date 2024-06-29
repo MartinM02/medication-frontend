@@ -25,7 +25,6 @@ export default {
   deleteFormData(id: number) {
     return apiClient.delete(`/api/medication/${id}`);
   },
-
   updateForm(id: number, formData: FormData) {
     return apiClient.put(`/api/medication/${id}`, formData);
   },
