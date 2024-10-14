@@ -1,45 +1,66 @@
-# medication-frontend
+# Medication Management App - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Die **Medication Management App** ist eine Webanwendung, die Benutzern hilft, ihre Medikamenteneinnahme zu verwalten. Die App dient als persönliche Gesundheitsassistentin und sorgt dafür, dass Benutzer den Überblick über ihre täglichen Medikamente behalten.
 
-## Recommended IDE Setup
+## Funktionen
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Medikamenteneintrag**: Einfaches Hinzufügen von Medikamenten mit Dosierung und Einnahmezeiten.
+- **Erinnerungen**: Benachrichtigungen zur Medikamenteneinnahme.
+- **Übersicht**: Klare Darstellung aller eingegebenen Medikamente.
 
-## Type Support for `.vue` Imports in TS
+## Technologien
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- **Vue 3**: Für die Erstellung interaktiver Benutzeroberflächen.
+- **Vite**: Schnelles Build-Tool für moderne Webanwendungen.
+- **TypeScript**: Typensicherheit und verbesserte Entwicklererfahrung.
 
-## Customize configuration
+## Installation
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+Um die Anwendung lokal zu installieren und auszuführen, folge diesen Schritten:
 
-## Project Setup
+1. **Repository klonen**:
 
-```sh
-npm install
-```
+   ```bash
+   git clone <https://github.com/MartinM02/medication-frontend.git>
 
-### Compile and Hot-Reload for Development
+2. **Abhängigkeiten installieren**:
 
-```sh
-npm run dev
-```
+   Navigiere in das Verzeichnis der Anwendung und führe den folgenden Befehl aus:
 
-### Type-Check, Compile and Minify for Production
+   ```bash
+   npm install
+   ```
 
-```sh
-npm run build
-```
+3. **Entwicklungsserver starten**:
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+   Um die Anwendung im Entwicklungsmodus zu starten, führe den folgenden Befehl aus:
 
-```sh
-npm run test:unit
-```
+   ```bash
+   npm run dev
+   ```
 
-### Lint with [ESLint](https://eslint.org/)
+   Die Anwendung sollte dann unter `http://localhost:3000` verfügbar sein.
 
-```sh
-npm run lint
-```
+## Weitere Befehle
+
+- **Build für die Produktion**:
+
+   ```bash
+   npm run build
+   ```
+
+- **Unit-Tests mit Vitest**:
+
+   ```bash
+   npm run test:unit
+   ```
+
+- **Linting mit ESLint**:
+
+   ```bash
+   npm run lint
+   ```
+
+## Kontakt
+
+Für Fragen oder Anregungen kannst du mich unter [Martin.Matuschinski@Student.HTW-Berlin.de] erreichen.
